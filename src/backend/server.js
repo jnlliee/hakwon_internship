@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); //이메일 형식을 확인하기 위한 regex 패턴
 // ✅ Your mock S3 link
 const MOCK_S3_LINK =
-'https://file.notion.so/f/f/cdbb405c-da8d-46bf-be6b-98952c9e4077/5d40b9b2-7ba9-4886-9e16-5a3f8baa8467/2025-07-23_%EC%9E%85%EC%8B%9C_%ED%8A%B8%EB%A0%8C%EB%93%9C_%EB%B3%B4%EA%B3%A0%EC%84%9C.pdf?table=block&id=23b79339-bdce-80d6-915a-f56ba00f3042&spaceId=cdbb405c-da8d-46bf-be6b-98952c9e4077&expirationTimestamp=1753488000000&signature=2OEIS0XIYLCOj7T2JW5vQRfkzKy_kHYElniz7gIAEUo&downloadName=2025-07-23+%EC%9E%85%EC%8B%9C+%ED%8A%B8%EB%A0%8C%EB%93%9C+%EB%B3%B4%EA%B3%A0%EC%84%9C.pdf';
+'https://hakwonsin-ipsitrend-bucket.s3.us-east-2.amazonaws.com/2025-07-24%20%EC%9E%85%EC%8B%9C%20%ED%8A%B8%EB%A0%8C%EB%93%9C%20%EB%B3%B4%EA%B3%A0%EC%84%9C.pdf';
 
 app.use(cors()); //requests from front end
 app.use(bodyParser.json());  //allows parsing of JSON request bodies (e.g., { email: "abc@xyz.com" }).
