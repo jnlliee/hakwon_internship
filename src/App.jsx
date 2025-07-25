@@ -14,8 +14,8 @@ function App() {
 
     setIsSending(true);
 
-    try {
-      const response = await fetch('http://localhost:3001/api/send-pdf', {
+    try {                         
+      const response = await fetch('https://hakwon-internship.onrender.com/api/send-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
