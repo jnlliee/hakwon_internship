@@ -45,8 +45,8 @@ function App() {
         <h1 style={styles.title}>학원의 신</h1>
 
         <h2 style={styles.subtitle}>
-          오늘의 교육 트렌드, 학원의 <br />
-          신으로 한눈에
+          오늘의 교육 트렌드,  <br /> 
+          학원의 신으로 한눈에  <br />
         </h2>
 
         <p style={styles.description}>
