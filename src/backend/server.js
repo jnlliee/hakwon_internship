@@ -41,7 +41,7 @@ app.post('/api/send-pdf', async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: `"Hakwon Academy" <${process.env.GMAIL_USER}>`, // shows in inbox
+      from: `"학원의신" <${process.env.GMAIL_USER}>`, // shows in inbox
       to: email,
       subject: '📄 요청하신 리포트입니다',
       html: `
