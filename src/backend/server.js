@@ -1,70 +1,98 @@
-const express = require('express'); //web framework for building api
-const cors = require('cors'); // so frontend can talk to backend on another port
-const bodyParser = require('body-parser'); //Parses incoming JSON requests
-const nodemailer = require('nodemailer');  // ✅ Using Gmail instead
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+//const axios = require('axios');
 require('dotenv').config();
 
-
-//express server instance
 const app = express();
-const PORT = 3001; // it will listen on port 3000
+const PORT = 3001;
 
-
-// ✅ Gmail transporter using App Password
+// ✅ Gmail SMTP setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.GMAIL_USER,       
-    pass: process.env.GMAIL_APP_PASS,  
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASS,
   },
 });
 
-// ✅ Email validation helper
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); //이메일 형식을 확인하기 위한 regex 패턴
-// ✅ Your mock S3 link
-const MOCK_S3_LINK =
-'https://hakwonsin-ipsitrend-bucket.s3.us-east-2.amazonaws.com/2025-07-24%20%EC%9E%85%EC%8B%9C%20%ED%8A%B8%EB%A0%8C%EB%93%9C%20%EB%B3%B4%EA%B3%A0%EC%84%9C.pdf';
+// ✅ Email format validation
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-app.use(cors()); //requests from front end
-app.use(bodyParser.json());  //allows parsing of JSON request bodies (e.g., { email: "abc@xyz.com" }).
-//api endpoint where frontend sends user's email address to backend.
-app.post('/api/send-pdf', async (req, res) => { 
-  const { email } = req.body; //extract email from the request
+// ✅ Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
-  if (!email) { 
+
+app.post('/api/v1/user/register', async (req, res) => {
+
+  if (!email) {
     return res.status(400).json({ success: false, error: '이메일이 제공되지 않았습니다.' });
   }
 
   if (!isValidEmail(email)) {
     return res.status(400).json({ success: false, error: '유효하지 않은 이메일 주소입니다.' });
   }
+  console.log(`이메일 등록됨: ${email}`);
+  // TODO: save to mock DB 
+  res.status(200).json({ success: true, message: '이메일 등록 성공 (로컬 테스트)' });
+});
+
+
+/**
+ * Receive email list + pdfUrl and send the Gmail
+ */
+
+app.post('/api/receive-email-list', async (req, res) => {
+  const { emails, pdfUrl } = req.body;
+
+  if (!emails || !Array.isArray(emails) || emails.length === 0) {
+    return res.status(400).json({ success: false, error: '이메일 리스트가 없습니다.' });
+  }
+
+  if (!pdfUrl || typeof pdfUrl !== 'string') {
+    return res.status(400).json({ success: false, error: 'PDF 링크가 유효하지 않습니다.' });
+  }
+  //printing 
+  if (pdfUrl) {
+      console.log(`📄 전달받은 PDF 링크: ${pdfUrl}`);
+    } else {
+      console.log('⚠️ PDF 링크가 전달되지 않았습니다.');
+    }
+  console.log(`📋 총 ${emails.length}개의 이메일 수신됨`);
+  //print texts
 
   try {
-    await transporter.sendMail({
-      from: `"학원의신" <${process.env.GMAIL_USER}>`, // shows in inbox
-      to: email,
-      subject: '📄 요청하신 리포트입니다',
-      html: `
-        <p>안녕하세요!</p>
-        <p>요청하신 리포트를 아래 링크에서 확인하실 수 있습니다:</p>
-        <p><a href="${MOCK_S3_LINK}">PDF 다운로드</a></p>
-        <p>감사합니다.<br/>Hakwon Academy</p>
-      `,
-    });
+    for (const email of emails) {
+      if (!isValidEmail(email)) {
+        console.warn(`❌ 유효하지 않은 이메일: ${email}`);
+        continue;
+      }
+      console.log(`📩 이메일: ${email}`); //이메일 모두 로그 
 
-    console.log(`✅ Email sent to: ${email}`);
-    res.status(200).json({ success: true, message: '이메일 전송 성공' });
+      await transporter.sendMail({
+        from: `"학원의신" <${process.env.GMAIL_USER}>`,
+        to: email,
+        subject: '📄 오늘의 리포트입니다',
+        html: `
+          <p>안녕하세요!</p>
+          <p>오늘의 리포트를 아래 링크에서 확인하실 수 있습니다:</p>
+          <p><a href="${pdfUrl}">PDF 다운로드</a></p>
+          <p>감사합니다.<br/>Hakwon Academy</p>
+        `,
+      });
+      console.log(`📤 전송 완료: ${email}`);
+    }
+
+    res.status(200).json({ success: true, message: '모든 이메일 전송 완료' });
   } catch (error) {
-    console.error('❌ 이메일 전송 실패:', error);
-    res.status(500).json({ success: false, error: '이메일 전송 실패' });
+    console.error('❌ 일괄 전송 실패:', error.message);
+    res.status(500).json({ success: false, error: '일부 또는 전체 이메일 전송 실패' });
   }
 });
 
+// ✅ Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });
-
-//“This is a Node.js Express server that receives an email from the frontend, 
-// validates it, and sends a PDF link to that email using Gmail SMTP with Nodemailer.”
-//이 서버는 Node.js Express로 만든 백엔드로, 프론트엔드에서 이메일을 입력받고 유효성 검사를 한 뒤,
-// Gmail SMTP와 Nodemailer를 이용해 해당 이메일로 PDF 링크를 전송합니다.
