@@ -45,6 +45,7 @@ app.post('/api/v1/user/register', async (req, res) => {
  * Receive email list + pdfUrl and send the Gmail
  */
 app.post('/api/receive-email-list', async (req, res) => {
+  console.log('✅ Got a POST request from teammate!');
   const { emails, pdfUrl } = req.body;
 
   if (!emails || !Array.isArray(emails) || emails.length === 0) {
@@ -93,6 +94,6 @@ app.post('/api/receive-email-list', async (req, res) => {
 });
 
 // ✅ Start the server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0',() => {
   console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });

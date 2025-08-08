@@ -12,8 +12,8 @@ function EmailRegistration() {
 
     setIsSending(true);
 
-    try {
-      const response = await fetch('https://hakwon-internship.onrender.com/api/v1/user/register', {
+    try {;
+      const response = await fetch('http://172.20.94.56:8080/api/v1/user/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -36,7 +36,7 @@ function EmailRegistration() {
   };
 
   return (
-    <div style={styles.inputGroup}>
+    <div style={styles.row}>
       <input
         type="email"
         placeholder="이메일 입력해주세요"
@@ -44,7 +44,7 @@ function EmailRegistration() {
         onChange={(e) => setEmail(e.target.value)}
         style={styles.input}
       />
-      <button style={styles.sendBtn} onClick={handleSend} disabled={isSending}>
+      <button style={styles.button} onClick={handleSend} disabled={isSending}>
         {isSending ? '전송 중...' : '구독 →'}
       </button>
     </div>
@@ -52,24 +52,38 @@ function EmailRegistration() {
 }
 
 const styles = {
-  inputGroup: {
+  row: {
     display: 'flex',
-    gap: '12px',
-    flexDirection: 'row',
-    marginBottom: '20px',
-    flexWrap: 'wrap',
+    gap: '16px',
     alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
   },
   input: {
-    padding: '16px',
-    borderRadius: '10px',
+    backgroundColor: '#d8cc9c',
+    color: 'white',
+    fontWeight: 'bold',
     border: 'none',
+    borderRadius: '16px',
+    padding: '0 24px',
     fontSize: '18px',
-    maxWidth: '220px',
-    backgroundColor: '#d4cc95',
-    width: '100%',
+    height: '56px',
+    minWidth: '260px',
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#4c9eff',
+    color: 'white',
+    fontWeight: 'bold',
+    border: 'none',
+    borderRadius: '16px',
+    padding: '0 24px',
+    fontSize: '18px',
+    height: '56px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sendBtn: {
     backgroundColor: '#558cc7',
