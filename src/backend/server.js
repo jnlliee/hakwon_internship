@@ -24,7 +24,7 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 app.use(cors());
 app.use(bodyParser.json());
 
-
+/**
 app.post('/api/v1/user/register', async (req, res) => {
 
   if (!email) {
@@ -37,13 +37,13 @@ app.post('/api/v1/user/register', async (req, res) => {
   console.log(`이메일 등록됨: ${email}`);
   // TODO: save to mock DB 
   res.status(200).json({ success: true, message: '이메일 등록 성공 (로컬 테스트)' });
-});
+}); 
+*/
 
 
 /**
  * Receive email list + pdfUrl and send the Gmail
  */
-
 app.post('/api/receive-email-list', async (req, res) => {
   const { emails, pdfUrl } = req.body;
 
